@@ -91,7 +91,7 @@ ISR(TIMER1_OVF_vect)
 
 		if (ppm_off)
 		{
-			OCR1A = 65535; // stop pulses
+			OCR1A = 0xFFFF; // stop pulses
 		}
 		else
 		{
@@ -122,7 +122,7 @@ ISR(TIMER1_OVF_vect)
 		if (ppm_timeout)
 		{
 			ppm_off = true;
-			OCR1A = 65535; // stop pulses				
+			OCR1A = 0xFFFF; // stop pulses				
 		}
 		else
 		{
@@ -155,7 +155,7 @@ void setup()
 
     // divide clock by 8 for timer1
 	TCCR1B = (1 << WGM12) | (1 << WGM13) | (1 << CS11);
-  	OCR1A = 65535;  // no pulse out by default
+  	OCR1A = 0xFFFF;  // no pulse out by default
   	ICR1 = 3000; // initial value  
 
   	// enable timer1 overflow interrupt

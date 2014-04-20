@@ -235,10 +235,9 @@ void loop()
 			
 		if (systime >= ppm_timer + PPM_TIMEOUT)
 		{
-			LEDYELLOW_OFF();	
 			LEDGREEN_OFF();	
-
 			#ifndef PPM_NO_TIMEOUT
+                        LEDYELLOW_OFF();
 			ppm_timeout = true;	
 			#endif
 		}

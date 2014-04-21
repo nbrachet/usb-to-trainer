@@ -1,6 +1,8 @@
 # simple test program 
 # generating packets
 # for the arduino board
+# specify port number and a series of channel values
+# for ppm output
 
 import sys, serial
 import time
@@ -8,10 +10,15 @@ import time
 BAUDRATE = 115200
 
 # serial port number
-# python numbering starts from 0: COM68 -> 67
-SERPORT = 79
+# on windows python port numbering starts from 0: COM68 -> 67
+# on linux: /dev/ttyUSB0
 
-channels = 1500, 1500, 1500, 1500, 1500, 1500
+if (len(sys.argv) < 2):
+	print 'usage: python',sys.argv[0],'/dev/ttyUSB0 1500 1000'
+	exit(1)
+
+port = int(sys.argv[1])
+channels = sys.argv[2:]
 
 count = 5 + len(channels) * 2
 
@@ -20,11 +27,17 @@ packet.append(0x01) # start byte
 packet.append(count) # length
 packet.append(0x01) # type
 
-for ch in channels:
-	b = (ch & 0x000000ff)
-	packet.append(b)
-	b = (ch & 0x0000ff00) >> 8
-	packet.append(b)
+try: #test for string to int cast
+	for ch in channels:
+		ch = int(ch)
+		b = (ch & 0x000000ff)
+		packet.append(b)
+		b = (ch & 0x0000ff00) >> 8
+		packet.append(b)
+
+except Exception, e:
+	print e		
+	exit(1)	
 
 checksum = 0
 
@@ -38,8 +51,6 @@ packet.append(0x04) # end byte
 for b in packet:
 	sys.stdout.write(format(b, '02x'))
 	sys.stdout.write(' ')
-
-port = SERPORT
 
 try:
 	ser = serial.Serial(port, BAUDRATE)
